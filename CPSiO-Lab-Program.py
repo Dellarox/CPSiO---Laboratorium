@@ -1,70 +1,39 @@
+import matplotlib as plt
 import numpy as np
-import matplotlib.pyplot as plt
-import os
+import PySimpleGUI as sg
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
-print("""
---------------------------------------------------------------------
-|Laboratorium z przedmiotu Cyfrowe Przetwarzanie Sygnałów i Obrazów|
-|        Kajetan Krasoń 252767, Kacper Małkowski 252724            |
---------------------------------------------------------------------
-Wybierz operację, którą chcesz wykonać:
-1. .
-2. .
-3. .
-""")
+layout = [[sg.Text("""
+Laboratorium z przedmiotu Cyfrowe Przetwarzanie Sygnałów i Obrazów
+        Kajetan Krasoń 252767, Kacper Małkowski 252724            """)],
+          [sg.Button("Wczytaj plik"), sg.Button("Wyjdz")]]
 
-#input dolnaGranica and gornaGranica
-#dolnaGranica = int(input("Podaj dolna granicę przedziału: "))
-#gornaGranica = int(input("Podaj górną granicę przedziału: "))
-dolnaGranica = 1000
-gornaGranica = 2000
 
-#make gui where user can write doldnaGranica and gornaGranica
+signal = [[sg.Button("Wroc")], [sg.Button("Wyswietl")]]
+image = [[sg.Text("Hello from PySimpleGUI")], [sg.Button("Wroc")], [sg.Button("Wczytaj plik")]]
 
-#read data from txt file
-dataEKG1 = np.loadtxt('dane\ekg1.txt')
 
-#make plot for ekg1.txt in interval [dolnaGranica, gornaGranica] and save it to wykresy folder as ekg1.png
-plt.plot(dataEKG1[dolnaGranica:gornaGranica])
-plt.title('EKG1')
-plt.xlabel('Czas [s]')
-plt.ylabel('Amplituda [Hz]')
-plt.grid(True)
-plt.savefig('wykresy\ekg1.png')
-plt.show()
+window = sg.Window("Aplikacja CPSiO", layout)
+while True:
+    event, values = window.read()
+    if event == "Wyjdz" or event == sg.WIN_CLOSED:
+        break
 
-#generate a sample sequence corresponding to a 50 Hz sine wave amd a length of 65536
-sampleSequence = np.sin(2 * np.pi * 50 * np.arange(0, 65536) / 65536)
+    if event == "Wczytaj plik":
+        filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+        if filename != "":
+            extension = filename.split(".")[1]
+            if extension != "jpg" or extension != "png" or extension != "txt":
+                sg.Popup("Nieprawidlowy format pliku")
+            else:
+                with open(filename, "r") as file:
+                    data = file.read()
+                if extension == "txt":
+                    window = sg.Window("Aplikacja CPSiO", signal)
+                elif extension == "png" or extension == "jpg":
+                    window = sg.Window("Aplikacja CPSiO", image)
+        else:
+            sg.Popup("Nie wybrano pliku")
 
-#generate a fft of the sampleSequence and show its magnitude spectrum on plot in frequency  (0, 65536/2)
-fftSampleSequence = np.fft.fft(sampleSequence)
-plt.plot(np.abs(fftSampleSequence[0:65536//2]))
-plt.title('Magnitude spectrum of the sample sequence')
-plt.xlabel('Frequency [Hz]')
-plt.ylabel('Magnitude')
-plt.grid(True)
-plt.show()
-
-#generate a sample sequence mixture of two sine waves with frequencies of 50 and 60 Hz
-sampleSequenceMixture = np.sin(2 * np.pi * 50 * np.arange(0, 65536) / 65536) + np.sin(2 * np.pi * 60 * np.arange(0, 65536) / 65536)
-
-#generate a fft of the sampleSequenceMixture and show its magnitude spectrum on plot in frequency  (0, 65536/2)
-fftSampleSequenceMixture = np.fft.fft(sampleSequenceMixture)
-plt.plot(np.abs(fftSampleSequenceMixture[0:65536//2]))
-plt.title('Magnitude spectrum of the sample sequence mixture')
-plt.xlabel('Frequency [Hz]')
-plt.ylabel('Magnitude')
-plt.grid(True)
-plt.show()
-
-#generate a sample sequence corresponding to a 50 Hz sine wave amd a length of 32768
-sampleSequence = np.sin(2 * np.pi * 50 * np.arange(0, 32768) / 32768)
-
-#generate a fft of the sampleSequence and show its magnitude spectrum on plot in frequency  (0, 32768/2)
-fftSampleSequence = np.fft.fft(sampleSequence)
-plt.plot(np.abs(fftSampleSequence[0:32768//2]))
-plt.title('Magnitude spectrum of the sample sequence')
-plt.xlabel('Frequency [Hz]')
-plt.ylabel('Magnitude')
-plt.grid(True)
-plt.show()
+window.close()
