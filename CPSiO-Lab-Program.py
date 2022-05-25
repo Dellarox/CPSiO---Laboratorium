@@ -250,13 +250,16 @@ def saveFragment(image):
 
     p1 = p1.split(",")
     p2 = p2.split(",")
+    p1[0] = int(p1[0])
+    p1[1] = int(p1[1])
+    p2[0] = int(p2[0])
+    p2[1] = int(p2[1])
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     imageFragment = image[p1[1]:p2[1], p1[0]:p2[0]]
 
     showImage(imageFragment, "Fragment obrazka")
-    filename = askopenfilename()
-    if filename:
-        cv2.imwrite(filename, imageFragment)
+    cv2.imwrite("dane/croppedImage.jpg", imageFragment)
 
 
 def multiply(image):
