@@ -365,10 +365,7 @@ def laplacian(image):
 
 
 def save(image):
-    filename = askopenfilename()
-    if filename:
-        cv2.imwrite(filename, image)
-    pass
+    cv2.imwrite("dane/image.jpg", image)
 
 
 while True:
